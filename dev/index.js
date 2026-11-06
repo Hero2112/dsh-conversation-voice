@@ -31,12 +31,12 @@ export const DEFAULTS = Object.freeze({
   speech: true,
   /** 指定发音人名称；留空表示自动挑中文语音。 */
   voice: '',
-  /** 语速，-10（最慢）到 10（最快）。 */
-  rate: 0,
+  /** 语速，-10（最慢）到 10（最快）；6 约为默认速度的两倍。 */
+  rate: 6,
   /** 音量，0 到 100。 */
   volume: 95,
-  /** 朗读摘要最多保留多少字。 */
-  maxChars: 120,
+  /** 朗读摘要最多保留多少字（默认只念一句开头，20 字上限）。 */
+  maxChars: 20,
   /** 朗读前缀，例如「任务完成。」。 */
   prefix: '任务完成。',
   /** 回合结束后等多久再播报（毫秒），用来合并连续触发的回合。 */
@@ -158,8 +158,10 @@ export function summarizeForSpeech(input, maxChars) {
     const index = cut.lastIndexOf(punctuation);
     if (index > best) best = index;
   }
-  const body = best >= Math.floor(limit * 0.6) ? cut.slice(0, best + 1) : cut;
-  if (best >= Math.floor(limit * 0.6) && SENTENCE_END.indexOf(body.slice(-1)) >= 0) return body;
+  const threshold = Math.floor(limit * 0.6);
+  if (best >= threshold) return cut.slice(0, best + 1);
+  // 截断后补句号也算一个字，留出位置给句号，保证总长不超过 maxChars
+  const body = cut.slice(0, Math.max(1, limit - 1));
   return body.replace(/[\s，、；：,;:]+$/u, '') + '。';
 }
 

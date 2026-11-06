@@ -111,9 +111,9 @@ function fakeSession(options = {}) {
     assert.equal(config.chimeSound, 'Asterisk');
     assert.equal(config.speech, true);
     assert.equal(config.voice, '');
-    assert.equal(config.rate, 0);
+    assert.equal(config.rate, 6);
     assert.equal(config.volume, 95);
-    assert.equal(config.maxChars, 120);
+    assert.equal(config.maxChars, 20);
     assert.equal(config.prefix, '任务完成。');
     assert.equal(config.debounceMs, 900);
   });
@@ -161,13 +161,18 @@ function fakeSession(options = {}) {
   await test('摘要按字数截断并收在标点处', () => {
     const long = '第一段说完了。' + '第二段'.repeat(200);
     const summary = plugin.summarizeForSpeech(long, 40);
-    assert.ok(summary.length <= 41, String(summary.length));
+    assert.ok(summary.length <= 40, String(summary.length));
     assert.ok(summary.endsWith('。'), summary);
   });
 
   await test('摘要不会超过上限太多', () => {
     const summary = plugin.summarizeForSpeech('啊'.repeat(300), 50);
-    assert.ok(summary.length <= 52, String(summary.length));
+    assert.ok(summary.length <= 50, String(summary.length));
+  });
+
+  await test('默认摘要上限是 20 字（含收尾句号）', () => {
+    const summary = plugin.summarizeForSpeech('这是一段很长很长的答复，'.repeat(30));
+    assert.ok(summary.length <= 20, String(summary.length));
   });
 
   await test('取最后一条 assistant 文字消息', () => {
@@ -228,7 +233,7 @@ function fakeSession(options = {}) {
     assert.ok(script.indexOf('[System.Media.SystemSounds]::Asterisk.Play()') >= 0, script);
     assert.ok(script.indexOf('Add-Type -AssemblyName System.Speech') >= 0, script);
     assert.ok(script.indexOf("Culture.Name -like 'zh*'") >= 0, script);
-    assert.ok(script.indexOf('$s.Rate = 0') >= 0, script);
+    assert.ok(script.indexOf('$s.Rate = 6') >= 0, script);
     assert.ok(script.indexOf('$s.Volume = 95') >= 0, script);
     const expected = Buffer.from('任务完成。做完了。', 'utf8').toString('base64');
     assert.ok(script.indexOf(expected) >= 0, script);

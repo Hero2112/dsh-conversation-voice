@@ -3,7 +3,7 @@
     "version":  "1.1.0-dev.0",
     "private":  true,
     "type":  "module",
-    "description":  "Plays a chime and reads a spoken summary of what the finished turn accomplished after each conversation turn ends. (dev working copy, never installed)",
+    "description":  "Plays a chime and reads a short spoken summary of what the finished turn accomplished after each conversation turn ends. (dev working copy, never installed)",
     "exports":  {
                     ".":  "./index.js",
                     "./locale/*.json":  "./locale/*.json",
