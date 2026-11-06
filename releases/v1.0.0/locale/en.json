@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Conversation completion voice",
+    "description": "Plays a system chime and reads a spoken summary of the finished turn after each conversation turn, so you can tell what a task accomplished while away from the screen."
+  }
+}

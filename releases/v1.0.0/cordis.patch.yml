@@ -1,0 +1,5 @@
+# 对话完成播报：纯 Host 插件，没有客户端界面。
+# Host 侧监听 session/event，在 turn/end 后调用 Windows 系统语音朗读摘要。
+- insert:
+    - id: conversation-voice
+      name: '@local/conversation-voice'
