@@ -1,4 +1,4 @@
-# 给某个已冻结的版本补发 GitHub Release（tag + 版本说明 + zip 附件）。
+﻿# 给某个已冻结的版本补发 GitHub Release（tag + 版本说明 + zip 附件）。
 # 用法：powershell -NoProfile -File tools/publish-release.ps1 -Version 1.0.0
 # 说明：幂等——release 或附件已存在时会复用/跳过；默认用「最后改动这个 zip 的提交」打 tag。
 param(

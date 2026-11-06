@@ -55,10 +55,17 @@ check('files 列表与磁盘文件一致', () => {
   }
 });
 
-check('运行必需文件都在', () => {
+check('运行必需文件都在，发布脚本是带 BOM 的 UTF-8 + CRLF', () => {
   for (const name of ['index.js', 'cordis.patch.yml', 'README.md', 'INSTALL.md', 'icon.svg', 'locale/zh.json', 'locale/en.json', 'package.json']) {
     assert.ok(fs.existsSync(path.join(root, name)), '缺少文件：' + name);
   }
+  // Windows PowerShell 5.1 只有认 BOM 才不会把中文注释按 ANSI 解码，缺 BOM 会直接语法报错。
+  const script = path.join(__dirname, '..', 'tools', 'publish-release.ps1');
+  assert.ok(fs.existsSync(script), '缺少 tools/publish-release.ps1');
+  const bytes = fs.readFileSync(script);
+  assert.deepEqual([...bytes.subarray(0, 3)], [0xef, 0xbb, 0xbf], '发布脚本缺少 UTF-8 BOM');
+  const text = bytes.toString('utf8');
+  assert.ok(text.indexOf('\r\n') >= 0, '发布脚本不是 CRLF 换行');
 });
 
 check('index.js 能通过语法检查（用 node --check 等价校验）', () => {
