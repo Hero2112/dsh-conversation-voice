@@ -1,4 +1,4 @@
-# 对话完成播报（Conversation Voice）v1.0.1
+# 对话完成播报（Conversation Voice）v1.0.2
 
 > **GitHub 仓库**：https://github.com/Hero2112/dsh-conversation-voice （私有）
 
@@ -25,11 +25,11 @@ DSH 每完成一轮对话，会往会话日志里追加一个 `turn/end` 事件�
 
 1. **清洗 Markdown**：去掉代码块、图片、表格线、标题和列表符号、强调符号、表情符号；
    链接只留文字，表格竖线换成空格。
-2. **截断**：默认最多 20 字，尽量切在句号 / 问号 / 分号处。
+2. **截断**：默认最多 30 字，尽量切在句号 / 问号 / 分号处。
 3. **加前缀**：默认「任务完成。」，然后交给语音引擎念出来。
 
 例子：最终答复是「已完成：把 3 个 SKU 的价格表整理进 `价格表.xlsx`，并生成了对比页。」
-听到的是：*任务完成。已完成 把 3 个 SKU 的价格表整理进。*（20 字上限，念到哪算哪）
+听到的是：*任务完成。已完成：把 3 个 SKU 的价格表整理进价格表.xlsx。*（30 字上限，刚好停在逗号处）
 
 > 摘要就是答复的开头，不额外调用模型，所以**零 token 消耗、零等待**。
 > 如果这一轮最终答复没有文字（例如只调用了工具），就只播提示音 + 「任务完成。」
@@ -45,7 +45,7 @@ DSH 每完成一轮对话，会往会话日志里追加一个 `turn/end` 事件�
 
 ## 安装
 
-1. 解压 `conversation-voice-1.0.1.zip`，得到 `conversation-voice/` 文件夹，放到一个固定位置
+1. 解压 `conversation-voice-1.0.2.zip`，得到 `conversation-voice/` 文件夹，放到一个固定位置
    （例如 `F:\Z AirDisk_Obsidian_3DPrint_营销推广\插件\conversation-voice\`）。
 2. 让 Agent 安装：`plugin_manager` → `install_bundle`，`target` 填这个文件夹的**绝对路径**。
 3. 装好后下一轮对话结束就会出声，一般不用重启；如果没反应，完全退出 DSH 再启动一次。
@@ -61,7 +61,7 @@ DSH 每完成一轮对话，会往会话日志里追加一个 `turn/end` 事件�
     - id: conversation-voice
       name: '@local/conversation-voice'
       config:
-        maxChars: 20
+        maxChars: 30
         prefix: '搞定。'
 ```
 
@@ -72,9 +72,9 @@ DSH 每完成一轮对话，会往会话日志里追加一个 `turn/end` 事件�
 | `chimeSound` | `Asterisk` | 系统声音：`Asterisk` / `Beep` / `Exclamation` / `Hand` / `Question` |
 | `speech` | `true` | 是否朗读摘要；关掉就只剩提示音 |
 | `voice` | 空 | 发音人名称，空 = 自动挑中文语音 |
-| `rate` | `6` | 语速，-10 到 10；`6` 约为默认速度的两倍 |
+| `rate` | `4` | 语速，-10 到 10；`4` 约为默认速度的 1.5 倍（`6` 约两倍、`10` 最快） |
 | `volume` | `95` | 音量，0 到 100 |
-| `maxChars` | `20` | 摘要最多多少字，20 到 500 |
+| `maxChars` | `30` | 摘要最多多少字，20 到 500 |
 | `prefix` | `任务完成。` | 朗读前缀，可清空 |
 | `debounceMs` | `900` | 回合结束后等多久再播报，0 到 10000 毫秒 |
 | `skipSubagent` | `true` | 是否跳过子代理会话 |
@@ -120,9 +120,9 @@ Add-Type -AssemblyName System.Speech
 ```
 conversation-voice/
 ├── README.md  CHANGELOG.md  INSTALL.md（dev 里也有）
-├── versions/v1.0.1.md          这一版说明
-├── releases/v1.0.1/            冻结快照（安装用）
-├── dist/conversation-voice-1.0.1.zip
+├── versions/v1.0.2.md          这一版说明
+├── releases/v1.0.2/            冻结快照（安装用）
+├── dist/conversation-voice-1.0.2.zip
 ├── dev/                        下一版工作副本
 └── tests/
     ├── run.cjs                 行为冒烟测试（假 ctx + 假 spawn，25 项）
@@ -138,4 +138,4 @@ node tests/check-manifest.cjs
 ```
 
 真实出声验证：临时写一个不入库的小脚本，调用 `buildSpeechCommand` 并用真实 `spawn`
-播一次，退出码 0 表示 PowerShell 脚本语法和语音引擎都正常（1.0.1 已这样验过）。
+播一次，退出码 0 表示 PowerShell 脚本语法和语音引擎都正常（1.0.2 已这样验过）。

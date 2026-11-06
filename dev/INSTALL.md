@@ -1,4 +1,4 @@
-# 安装说明（对话完成播报 v1.0.1）
+# 安装说明（对话完成播报 v1.0.2）
 
 ## 一句话
 
@@ -23,7 +23,7 @@
 
 ### 方法一：让 Agent 装（推荐）
 
-1. 解压 `conversation-voice-1.0.1.zip`，得到 `conversation-voice/` 文件夹；
+1. 解压 `conversation-voice-1.0.2.zip`，得到 `conversation-voice/` 文件夹；
    放到一个固定位置，例如：
 
    ```

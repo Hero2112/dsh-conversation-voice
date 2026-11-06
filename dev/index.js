@@ -31,12 +31,12 @@ export const DEFAULTS = Object.freeze({
   speech: true,
   /** 指定发音人名称；留空表示自动挑中文语音。 */
   voice: '',
-  /** 语速，-10（最慢）到 10（最快）；6 约为默认速度的两倍。 */
-  rate: 6,
+  /** 语速，-10（最慢）到 10（最快）；4 约为默认速度的 1.5 倍。 */
+  rate: 4,
   /** 音量，0 到 100。 */
   volume: 95,
-  /** 朗读摘要最多保留多少字（默认只念一句开头，20 字上限）。 */
-  maxChars: 20,
+  /** 朗读摘要最多保留多少字（默认只念一句开头，30 字上限）。 */
+  maxChars: 30,
   /** 朗读前缀，例如「任务完成。」。 */
   prefix: '任务完成。',
   /** 回合结束后等多久再播报（毫秒），用来合并连续触发的回合。 */
@@ -152,14 +152,24 @@ export function summarizeForSpeech(input, maxChars) {
   const limit = clampInt(maxChars, 20, 500, DEFAULTS.maxChars);
   if (cleaned.length <= limit) return cleaned;
   const cut = cleaned.slice(0, limit);
-  // 尽量切在标点处，避免半个词
-  let best = -1;
-  for (const punctuation of SENTENCE_END) {
-    const index = cut.lastIndexOf(punctuation);
-    if (index > best) best = index;
-  }
   const threshold = Math.floor(limit * 0.6);
-  if (best >= threshold) return cut.slice(0, best + 1);
+  // 优先切在句末标点；英文句点要排除「价格表.xlsx」这种文件扩展名里的点
+  let strong = -1;
+  let soft = -1;
+  for (let index = 0; index < cut.length; index++) {
+    const character = cut[index];
+    if (SENTENCE_END.indexOf(character) >= 0) {
+      if (character === '.' || character === '!' || character === '?' || character === ';') {
+        const next = cut[index + 1];
+        if (next !== undefined && !/\s/u.test(next)) continue;
+      }
+      strong = index;
+      continue;
+    }
+    if (character === '，' || character === ',' || character === '、') soft = index;
+  }
+  if (strong >= threshold) return cut.slice(0, strong + 1);
+  if (soft >= threshold) return cut.slice(0, soft + 1).replace(/[，,、]+$/u, '。');
   // 截断后补句号也算一个字，留出位置给句号，保证总长不超过 maxChars
   const body = cut.slice(0, Math.max(1, limit - 1));
   return body.replace(/[\s，、；：,;:]+$/u, '') + '。';
