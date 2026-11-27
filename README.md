@@ -1,6 +1,7 @@
 # 对话完成播报（Conversation Voice）v1.0.2
 
-> **GitHub 仓库**：https://github.com/Hero2112/dsh-conversation-voice （私有）
+> **GitHub 仓库**：https://github.com/Hero2112/dsh-conversation-voice
+> **开源，MIT 许可** · [安装说明](INSTALL.md) · [Releases](https://github.com/Hero2112/dsh-conversation-voice/releases)
 
 DeepSeek Harness 的 **Host 插件**：每一轮对话结束后，先响一声 Windows 系统提示音，
 再用系统自带的语音引擎朗读这一轮**最终答复的摘要**——人离开屏幕也能知道任务做完了什么。
